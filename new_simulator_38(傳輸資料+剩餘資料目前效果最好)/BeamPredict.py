@@ -12,7 +12,6 @@ class BeamPredict:
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.bs_number = NetworkSettings.num_of_bs
         self.bs_list = NetworkSettings.bs_id_list
-        self.ue_bs_mapping = NetworkSettings.ue_to_bs_mapping_table
         self.bs_beam_list = BeamFormingFunction.bs_generator_beam_list
 
     def bs_execute(self,bs_id,need_ue_index):

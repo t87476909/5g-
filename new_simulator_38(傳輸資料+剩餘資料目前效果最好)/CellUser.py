@@ -43,10 +43,10 @@ class CellUser:
             if angle < 0:
                 angle = 360 + angle
             beam = math.floor(angle / self.beam_angle) #判別在哪個波束下
-
-            if beam not in self.beam_eliminate[i] or Simulation.beam_clear == False: #判斷生成的隨機座標點在不在需要被清除的座標內、#判斷是否要進行波束內座標清除的動作
+            if Simulation.beam_clear == False:
                 break
-        #print("bs_id = {} beam = {} thepoint = {} ".format(i,beam,thePoint))
+            elif beam not in self.beam_eliminate[i]: #判斷生成的隨機座標點在不在需要被清除的座標內、#判斷是否要進行波束內座標清除的動作
+                break
         return thePoint
 
     def getRandomPointInOverlap(self,x,y,i): #重複覆蓋範圍
@@ -72,8 +72,9 @@ class CellUser:
             if angle < 0:
                 angle = 360 + angle
             beam = math.floor(angle / self.beam_angle) #判別在哪個波束下
-
-            if beam not in self.beam_eliminate[i] or Simulation.beam_clear == False: #判斷生成的隨機座標點在不在需要被清除的座標內、#判斷是否要進行波束內座標清除的動作
+            if Simulation.beam_clear == False:
+                break
+            elif beam not in self.beam_eliminate[i]: #判斷生成的隨機座標點在不在需要被清除的座標內、#判斷是否要進行波束內座標清除的動作
                 break
         #print("bs_id = {} beam = {} Overlappoint = {} ".format(i,beam,thePoint))
         return thePoint

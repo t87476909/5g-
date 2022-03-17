@@ -35,9 +35,10 @@ class UeTime:
                 
 
     def ue_time_calculate(self,current_ue_index):
-
+        
+        current_beam_index = (SystemInfo.system_time - 1) % self.beam_number
         for i in range(len(current_ue_index)):
-            need_beam = self.beam_transmit[self.bs_id][self.beam_index]
+            need_beam = self.beam_transmit[self.bs_id][current_beam_index]
             if current_ue_index[i] not in self.bs_beam_ue[self.bs_id][need_beam]:
                 self.bs_beam_ue[self.bs_id][need_beam].append(current_ue_index[i])
 

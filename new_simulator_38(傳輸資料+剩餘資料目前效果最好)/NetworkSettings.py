@@ -1,7 +1,7 @@
 class NetworkSettings:
     num_of_bs = 25 #基地台數量
-    num_of_ue = 5 #單一基地台的UE數量(非重疊區域)
-    num_of_ue_overlap = 20 #單一基地台的UE數量(重疊區域)
+    num_of_ue = 15 #單一基地台的UE數量(非重疊區域)
+    num_of_ue_overlap = 60 #單一基地台的UE數量(重疊區域)
     simulation_time = 5000 #模擬時間 ms
     bs_range = 500 #基地台覆蓋範圍(m)
     Neighbor_Distance = 750 #基地台與基地台間距(m)
@@ -14,6 +14,7 @@ class NetworkSettings:
     Number_resource_block = 25 #資源塊數量 264
     system_bandwidth = 50 #系統帶寬(MHZ) 400
     beam_clear_index = [0,4] #固定波束清除設定
+    UE_speed = 60 #km/hr(使用者速度上限)
     write_data = True #是否輸出檔案
 
     BS_center_frequency = list()
@@ -24,7 +25,7 @@ class NetworkSettings:
     bs_ue_distance = dict() #基地台與UE的距離
     bs_beam_neighbor = dict() #基地台的波束關係
     bs_neighbor = dict() #基地台的鄰居關係
-    beam_eliminate = dict() #基地台那些波束裡面不會有ue
+    beam_eliminate = dict() #基地台一開始哪些波束裡面不會有ue
 
     #基地台個數36(固定)
     #執行時間 30000ms
@@ -34,9 +35,10 @@ class NetworkSettings:
 class SystemInfo:
     system_time = 0
     event_priority = 0 #事件優先度
-    control_variable = 25 #系統輪數控制 必須大於2才會有動態
-    system_round = 1 #系統執行輪數(老師規定要9次)
+    control_variable = 20 #系統輪數控制 必須大於2才會有動態
+    system_round = 5 #系統執行輪數(老師規定要9次)
     ntu_T_time = 2 #台大系統執行T時間
+    ue_move_cycle = 1000 # 1000ms移動一次ue座標
 
 class Simulation:
     mode = 0 #系統執行模式 0為我的方法(one) 1為我的方法(two) 2為全部靜態 3為台大參考論文方法 4為新論文
@@ -45,3 +47,4 @@ class Simulation:
     random_beam_clear_number = 3 #消除波束數量(1~3)
     beam_clear_mode = 1 # 0 為固定清除某些beam 1為隨機清除某些beam
     ue_open_time = dict() #儲存ue的開啟時間
+    execution_time = 0

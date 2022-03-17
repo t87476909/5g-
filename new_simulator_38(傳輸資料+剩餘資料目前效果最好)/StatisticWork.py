@@ -25,10 +25,9 @@ class StatisticWork:
         self.print_all_results()
         if NetworkSettings.write_data == True:
             self.write_csv()
-        self.data_clear()
-        if Simulation.mode == 4: #方法是最後一個時要更換參數 記得要換成4
-            #self.system_refrash()
-            self.data_change()
+        self.data_clear() #清除每一次方法 global變數 的留存資料(避免殘存資料影響其他方法)
+        #if Simulation.mode == 4: #方法是最後一個時要更換參數(例如ue數量增加 x軸數值改變用)
+            #self.data_change()
     
     def calculate_ue_data(self):
         for ue in NetworkSettings.ue_id_list:
@@ -50,8 +49,8 @@ class StatisticWork:
 
     def print_all_results(self):
         print("執行模式 = ",Simulation.mode)
-        print("DelayCalculateData.dc_ue_data: ", DelayCalculateData.dc_ue_data)
-        print("NetworkSettings.bs_ue_distance: ", NetworkSettings.bs_ue_distance)
+        #print("DelayCalculateData.dc_ue_data: ", DelayCalculateData.dc_ue_data)
+        #print("NetworkSettings.bs_ue_distance: ", NetworkSettings.bs_ue_distance)
         
         DelayCalculate.throughput_calculate()
         print("System Throughput(Mbps): ", DelayCalculateData.system_throughput)
@@ -79,6 +78,7 @@ class StatisticWork:
         print("開啟時間百分比 = ",self.power_saving)
         print("total_received_data: {}".format(self.total_received_data)) #bytes
         print("total_unsent_data: {}".format(self.total_unsent_data))
+        print("執行時間:",Simulation.execution_time)
 
     def write_csv(self):
         path  = "simulation_result.csv"
@@ -97,8 +97,7 @@ class StatisticWork:
         BeamFormingFunction.control_variable.clear()
         BeamFormingFunction.bs_generator_beam_state.clear()
         PredictControlValue.bs_miss_beam.clear()
-        BeamUseFunction.ue_location.clear()
-        BeamUseFunction.ue_overlap_location.clear()
+        BeamUseFunction.all_ue_location.clear()
         BeamUseFunction.bs_location.clear()
         BeamUseFunction.bs_transmit_beam.clear()
         BeamUseFunction.bs_transmit_state = 0

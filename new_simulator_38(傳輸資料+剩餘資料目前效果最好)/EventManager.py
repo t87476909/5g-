@@ -1,5 +1,5 @@
 from queue import PriorityQueue
-from NetworkSettings import NetworkSettings,SystemInfo,Simulation
+from NetworkSettings import NetworkSettings,SystemInfo
 from StatisticWork import StatisticWork
 import random
 
