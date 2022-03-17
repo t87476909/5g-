@@ -21,3 +21,9 @@ python with 5G BaseStation simulation
 18. StatisticWork.py 模擬數值統計與輸出檔案
 19. DelayCalculate.py 平均延遲、封包掉落率、輸出流量計算
 20. Picture.py 圖片印出
+
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_1.png)
+
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_2.png)
+
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_5.png)
