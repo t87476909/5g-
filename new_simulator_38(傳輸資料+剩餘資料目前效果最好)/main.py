@@ -69,9 +69,11 @@ def create_ue_overlap(event_manager,generate_user_point):
     #print("user重疊區域座標 = ",ue_overlap_location_list) 
 def mapping_bs_and_ue(): #自動產生mapping關係
     overlap_start_num = NetworkSettings.num_of_bs * NetworkSettings.num_of_ue #重疊基地台ue_id的起始編號
-    for i in range(len(NetworkSettings.ue_id_list)): #所有UE
+    ue_id_number = len(NetworkSettings.ue_id_list)
+    bs_id_number = len(NetworkSettings.bs_id_list)
+    for i in range(ue_id_number): #所有UE
         BeamUseFunction.all_ue_location.append(all_ue_location_list[i])
-        for j in range(len(NetworkSettings.bs_id_list)): # 所有基地台
+        for j in range(bs_id_number): # 所有基地台
             if i < overlap_start_num: #小於overlap_start_num 不重疊UE座標
                 bs_ue_x_distance = bs_location_list[j][0] - ue_location_list[i][0]
                 bs_ue_y_distance = bs_location_list[j][1] - ue_location_list[i][1]

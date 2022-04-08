@@ -39,11 +39,13 @@ class BeamPredict:
             if i not in beam:
                 miss_beam.append(i)
 
-        for j in range(len(miss_beam)):
+        miss_beam_number = len(miss_beam)
+        for j in range(miss_beam_number):
             change_location.append(j)
         
         if classify == 0:
-            for index in range(len(change_location)):
+            change_location_number = len(change_location)
+            for index in range(change_location_number):
                 beam[index] = miss_beam[miss_beam_index]
                 miss_beam_index += 1
             return beam

@@ -22,10 +22,11 @@ class BeamMapping:
         self.mapping()
 
     def mapping(self):
-        for i in range(len(self.bs_location)):
+        bs_number = len(self.bs_location)
+        for i in range(bs_number):
             NetworkSettings.bs_neighbor.setdefault("bs{}".format(i),list())
             NetworkSettings.bs_neighbor["bs{}".format(i)].append("bs{}".format(i))
-            for j in range(len(self.bs_location)):
+            for j in range(bs_number):
                 if self.bs_location[i][0] == self.bs_location[j][0]: #bs間的x相同
                     if (self.bs_location[i][1] + self.neighbor_distance) == self.bs_location[j][1]: #y往上一個distance單位
                         #position = 1
@@ -56,7 +57,8 @@ class BeamMapping:
         #neighbor_ue_beam_list = list(set(neighbor_ue_beam_list))
         #print("target_ue_beam_list = ",target_ue_beam_list)
         #print("neighbor_ue_beam_list = ",neighbor_ue_beam_list)
-        for beam_neighbor_index in range(len(target_ue_beam_list)):
+        target_ue_beam_number = len(target_ue_beam_list)
+        for beam_neighbor_index in range(target_ue_beam_number):
             NetworkSettings.bs_beam_neighbor["bs{}".format(i)]["bs{}".format(j)][target_ue_beam_list[beam_neighbor_index]] = neighbor_ue_beam_list[beam_neighbor_index]
 
     def beam_neighbor(self,target_bs,neighbor_bs):    
@@ -77,7 +79,8 @@ class BeamMapping:
                 ue_index = NetworkSettings.ue_id_list.index(ue_id) #所有ue的位置
                 location_index_list.append(ue_index - overlap_start_num) #求重疊區域的ue位置
 
-        for j in range(len(location_index_list)):
+        location_index_number = len(location_index_list)
+        for j in range(location_index_number):
             if location_index_list[j] >= 0:
                 ue_location = self.ue_overlap_location[location_index_list[j]]
                 target_ue_beam_list.append(self.beamclassification(ue_location,target_bs_location)) #目標與鄰居基地台的ue在哪個波束底下
@@ -97,7 +100,3 @@ class BeamMapping:
             angle = 360 + angle
         beam = math.floor(angle / self.beam_angle) #判別在哪個波束下 
         return beam
-        #for i in range(self.beam_number):
-        #    if self.beam_angle * i <= angle and angle <= self.beam_angle * (i + 1):
-                #print("ue_location = {} bs_location = {} angle = {} beam = {}".format(ue_location,bs_location,angle,i))
-        #        return i 

@@ -51,7 +51,8 @@ class BeamExchange:
                 
                 while unfinished_num > 0:
                     min_probilibty = min(unfinished_probilibty) #找剩餘波束最小機率(不包含0 因為機率為0的波束不會出現)
-                    remove_element = [i for i in range(len(probilibty)) if probilibty[i] == min_probilibty] #可能會有重複機率的波束出現
+                    probilibty_number = len(probilibty)
+                    remove_element = [i for i in range(probilibty_number) if probilibty[i] == min_probilibty] #可能會有重複機率的波束出現
                     remove_element = random.choice(remove_element)
                     #print("unfinished_probilibty = ",unfinished_probilibty)
                     #print("min_probilibty = ",min_probilibty)

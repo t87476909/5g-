@@ -1,5 +1,5 @@
 import random
-from TrafficGenerator import TrafficGenerator
+from TrafficGenerator import TrafficGenerator,GenerateUeMove
 from NetworkSettings import NetworkSettings,Simulation, SystemInfo
 from BeamTransmit import BeamUseFunction
 
@@ -27,6 +27,7 @@ class UeProcessData: #接收基地台傳輸資料
 class UserEquipment:
     event_handler_dict = {
         "incoming_downlink_data": UeProcessData,
+        "generate_ue_move": GenerateUeMove,
     }
 
     def __init__(self, ue_id, event_manager):
@@ -34,15 +35,19 @@ class UserEquipment:
         self.ue_id = "ue{}".format(ue_id)
         self.event_manager = event_manager
         data_type = ['voice','video','CBR']
-        for i in range(len(data_type)):
+        data_type_number = len(data_type)
+        for i in range(data_type_number):
             tg_id = self.ue_id + "{}".format(data_type[i])
             tg = TrafficGenerator(self.ue_id, tg_id, event_manager)
             NetworkSettings.object_info_dict[tg_id] = tg
 
     def event_handler(self, event_content):
         event_name = event_content['event_name']
-        if event_name in self.event_handler_dict:
+        #print("user event_name = ",event_name)
+        if event_name in self.event_handler_dict and event_name != 'generate_ue_move':
             self.event_handler_dict[event_name](event_content['event_details'], self.event_manager, self.ue_id).execute()
+        elif event_name == 'generate_ue_move':
+            self.event_handler_dict[event_name](self.event_manager, self.ue_id).execute()
         else:
             print("The {} cannot handle this event {}".format(self.ue_id, event_name))
 

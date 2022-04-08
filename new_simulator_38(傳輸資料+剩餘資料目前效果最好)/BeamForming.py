@@ -129,10 +129,9 @@ class BeamForming:
                 BeamFormingFunction.control_variable[self.bs_id] = 0
 
     def generator_location_dynamic_beam(self):
-        for i in range(len(BeamFormingFunction.location_beam_list[self.bs_id])):
+        location_beam_list_number = len(BeamFormingFunction.location_beam_list[self.bs_id])
+        for i in range(location_beam_list_number):
             self.beamforming_list.append(BeamFormingFunction.location_beam_list[self.bs_id][i])
-        if self.bs_id == 'bs0':
-            print("self.beamforming_list = ",self.beamforming_list)
         BeamFormingFunction.bs_generator_beam_list[self.bs_id]['time_before_last_time'] = self.beamforming_list
         BeamFormingFunction.bs_generator_beam_state[self.bs_id]['before_last_time_state'] = 'dymaic'
 

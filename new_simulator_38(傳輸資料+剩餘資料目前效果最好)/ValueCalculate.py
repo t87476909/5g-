@@ -71,11 +71,12 @@ class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行b
             if 0 in ValueControlData.beam_throughput[self.bs_id]: #判斷是否有流量為0的波束
                 zero_throughput_probability = 0
                 throughput_probability = 0
-                for zero_probability_index in range(len(ValueControlData.beam_throughput[self.bs_id])): #紀錄beam流量為0的機率總和
+                beam_throughput_number = len(ValueControlData.beam_throughput[self.bs_id])
+                for zero_probability_index in range(beam_throughput_number): #紀錄beam流量為0的機率總和
                     if ValueControlData.beam_throughput[self.bs_id][zero_probability_index] == 0:
                         zero_throughput_probability += probability[zero_probability_index]
                         probability[zero_probability_index] = 0
-                for probability_index in range(len(ValueControlData.beam_throughput[self.bs_id])):
+                for probability_index in range(beam_throughput_number):
                     if ValueControlData.beam_throughput[self.bs_id][probability_index] != 0:
                         probability[probability_index] = probability[probability_index] / (1 - zero_throughput_probability)
                         throughput_probability += probability[probability_index]
@@ -83,11 +84,12 @@ class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行b
             if 0 in ValueControlData.transmission_beam_throughput[self.bs_id]: #判斷是否有流量為0的波束
                 zero_throughput_probability = 0
                 throughput_probability = 0
-                for zero_probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])): #紀錄beam流量為0的機率總和
+                transmission_beam_throughput_number = len(ValueControlData.transmission_beam_throughput[self.bs_id])
+                for zero_probability_index in range(transmission_beam_throughput_number): #紀錄beam流量為0的機率總和
                     if ValueControlData.transmission_beam_throughput[self.bs_id][zero_probability_index] == 0:
                         zero_throughput_probability += transmission_probability[zero_probability_index]
                         transmission_probability[zero_probability_index] = 0
-                for probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])):
+                for probability_index in range(transmission_beam_throughput_number):
                     if ValueControlData.transmission_beam_throughput[self.bs_id][probability_index] != 0:
                         transmission_probability[probability_index] = transmission_probability[probability_index] / (1 - zero_throughput_probability)
                         throughput_probability += transmission_probability[probability_index]

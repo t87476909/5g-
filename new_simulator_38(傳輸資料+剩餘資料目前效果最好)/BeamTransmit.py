@@ -75,14 +75,17 @@ class BeamTransmit:
                 need_ue_id_list.append(ue_index)
         #if self.bs_id == 'bs0':
         #    print("need_ue_id_list = ",need_ue_id_list)
-        for i in range(len(need_ue_id_list)): #所有需要的ue_id遍歷
+        need_ue_id_number = len(need_ue_id_list)
+        for i in range(need_ue_id_number): #所有需要的ue_id遍歷
             ue_location = self.all_ue_location[need_ue_id_list[i]]
             self.ue_beam_list.append(self.beamclassification(ue_location,bs_location))
 
         beam_index = (SystemInfo.system_time - 1) % self.beam_number #該輪的第幾次波束
-        need_beam_index = [ i for i in range(len(self.ue_beam_list)) if self.ue_beam_list[i] == BeamUseFunction.bs_transmit_beam[self.bs_id][beam_index] ] #需要第幾個beam內的波束        
+        ue_beam_number = len(self.ue_beam_list)
+        need_beam_index = [ i for i in range(ue_beam_number) if self.ue_beam_list[i] == BeamUseFunction.bs_transmit_beam[self.bs_id][beam_index] ] #需要第幾個beam內的波束        
         
-        for i in range(len(need_beam_index)):
+        need_beam_number = len(need_beam_index)
+        for i in range(need_beam_number):
             need_beam_ue_id.append(need_ue_id_list[need_beam_index[i]]) #該波束需要的ue_id
 
         return need_beam_index,need_beam_ue_id

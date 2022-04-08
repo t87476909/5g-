@@ -25,8 +25,8 @@ class StatisticWork:
         self.print_all_results()
         if NetworkSettings.write_data == True:
             self.write_csv()
-        self.data_clear() #清除每一次方法 global變數 的留存資料(避免殘存資料影響其他方法)
-        #if Simulation.mode == 4: #方法是最後一個時要更換參數(例如ue數量增加 x軸數值改變用)
+        self.data_clear()
+        #if Simulation.mode == 4: #方法是最後一個時要更換參數 記得要換成4
             #self.data_change()
     
     def calculate_ue_data(self):

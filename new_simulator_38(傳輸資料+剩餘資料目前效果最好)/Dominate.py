@@ -39,8 +39,8 @@ class Dominate:
         self.bs_throughput_calculate()
         if self.beam_index == 0 and self.bs_throughput[self.bs_id]['last_time'] != None:
             if self.bs_id == self.last_bs: #若所有的dominate都決定完了
-
-                for i in range(len(self.bs_list)):
+                bs_list_number = len(self.bs_list)
+                for i in range(bs_list_number):
                     bs = self.bs_list[i]
                     self.coordinate_mask[bs] = dict()
                     for j in range(self.beam_number):
@@ -77,7 +77,8 @@ class Dominate:
         for target_bs_id,neighbor_bs_id_list in self.bs_neighbor.items():
             max_throughput = 0
             target_throughput = self.bs_throughput[target_bs_id]['last_time']
-            for i in range(len(neighbor_bs_id_list)):
+            neighbor_bs_id_number = len(neighbor_bs_id_list)
+            for i in range(neighbor_bs_id_number):
                 neighbor_bs = neighbor_bs_id_list[i]
                 neighbor_throughput = self.bs_throughput[neighbor_bs]['last_time']
                 #print("target_throughput = ",target_throughput)
@@ -113,7 +114,8 @@ class Dominate:
                 self.complete_bs += 1 #
                 if self.mode == 1:
                     neighbor_throughput = self.min_neighbor_throughput(target_bs)
-                for j in range(len(neighbor_bs)):
+                neighbor_bs_number = len(neighbor_bs)
+                for j in range(neighbor_bs_number):
                     if neighbor_bs[j] != target_bs and neighbor_bs[j] not in self.bs_allocated:
                         if self.mode == 1:
                             self.coordinate_two(target_bs,neighbor_bs[j],neighbor_throughput)

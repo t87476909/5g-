@@ -1,6 +1,8 @@
 import numpy as np
 import copy
 from NetworkSettings import NetworkSettings,Simulation,SystemInfo
+import time
+import pickle
 
 class ProportionalFairControlValue:
     location_beam_priority = dict() #[bs][beam][self.location_beam_priority]
@@ -9,12 +11,13 @@ class ProportionalFair:
     def __init__(self, history_rate, current_rb_rate, bs_id, ue_data, ue_id,bs_beamforming_list):
         self.Number_resource_block = NetworkSettings.Number_resource_block
         self.current_rb_rate = current_rb_rate
-        self.history_rate = copy.deepcopy(history_rate)
+        self.history_rate = copy.copy(history_rate) #好像可以用copy
+        self.ue_data = pickle.loads(pickle.dumps(ue_data))
         self.bs_id = bs_id
         self.origin_ue_data = ue_data
-        self.ue_data = copy.deepcopy(ue_data)
         self.ue_id = ue_id
         self.number_of_ue = len(self.ue_id)
+
         self.beam_number = int(360 / NetworkSettings.beam_angle)
         self.bs_beamforming_list = bs_beamforming_list
         self.except_total_rate = 0
@@ -35,10 +38,10 @@ class ProportionalFair:
             self.rb_allocate_list.append(None)
 
     def execute(self):
-        self.metric_calculate()
-        self.priority_calculate()
-        self.rb_allocate()
-        self.history_data_update()
+        self.metric_calculate() #0.4s
+        self.priority_calculate() #0.6s
+        self.rb_allocate() #0.35
+        self.history_data_update() #0.34
         if self.mode == 4:
             self.all_user_expected_rate()
         #print("self.pf_metric: ", self.pf_metric)
@@ -67,64 +70,9 @@ class ProportionalFair:
 
             for ue in range(self.number_of_ue):
                 pf_metric_per_rb.append(self.pf_metric[ue][rb])
-
-            priority_ue_index_per_rb = sorted(range(self.number_of_ue), key = lambda k: pf_metric_per_rb[k], reverse = True)
+            
+            priority_ue_index_per_rb = sorted(range(self.number_of_ue), key = lambda k: pf_metric_per_rb[k], reverse = True) #0.32s
             self.priority_ue_index.append(priority_ue_index_per_rb)
-
-    '''
-    def rb_allocate_full_packet(self):
-        rb = 0
-        for priority_ue_index_per_rb in self.priority_ue_index:
-            for ue_index in priority_ue_index_per_rb:
-                current_ue_id = self.ue_id[ue_index]
-                current_ue_data = self.ue_data.get("ue{}".format(current_ue_id))
-                allowed_data_bits = self.current_rb_rate[ue_index] * (10 ** 6)
-            
-                if  current_ue_data != None:
-                    if current_ue_data["voice"] > 0:
-                        if allowed_data_bits > current_ue_data["voice"]:
-                            self.allowed_data["ue{}".format(current_ue_id)]["voice"] = self.origin_ue_data["ue{}".format(current_ue_id)]["voice"]
-                            self.ue_data["ue{}".format(current_ue_id)]["voice"] = 0
-                            self.rb_allocate_list[rb] = current_ue_id
-                            break
-                        else:
-                            allowed_data_packet_num = int(allowed_data_bits / (10 * 8))
-                            if allowed_data_packet_num > 0:
-                                self.allowed_data["ue{}".format(current_ue_id)]["voice"] += ((10 * 8) * allowed_data_packet_num)
-                                self.ue_data["ue{}".format(current_ue_id)]["voice"] -= ((10 * 8) * allowed_data_packet_num)
-                                self.rb_allocate_list[rb] = current_ue_id
-                                break
-
-                    elif current_ue_data["video"] > 0:
-                        if allowed_data_bits > current_ue_data["video"]:
-                            self.allowed_data["ue{}".format(current_ue_id)]["video"] = self.origin_ue_data["ue{}".format(current_ue_id)]["video"]
-                            self.ue_data["ue{}".format(current_ue_id)]["video"] = 0
-                            self.rb_allocate_list[rb] = current_ue_id
-                            break
-                        else:
-                            allowed_data_packet_num = int(allowed_data_bits / (1000 * 8))
-                            if allowed_data_packet_num > 0:
-                                self.allowed_data["ue{}".format(current_ue_id)]["video"] += ((1000 * 8) * allowed_data_packet_num)
-                                self.ue_data["ue{}".format(current_ue_id)]["video"] -= ((1000 * 8) * allowed_data_packet_num)
-                                self.rb_allocate_list[rb] = current_ue_id
-                                break
-
-                    elif current_ue_data["CBR"] > 0:
-                        if allowed_data_bits > current_ue_data["CBR"]:
-                            self.allowed_data["ue{}".format(current_ue_id)]["CBR"] = self.origin_ue_data["ue{}".format(current_ue_id)]["CBR"]
-                            self.ue_data["ue{}".format(current_ue_id)]["CBR"] = 0
-                            self.rb_allocate_list[rb] = current_ue_id
-                            break
-                        else:
-                            allowed_data_packet_num = int(allowed_data_bits / (1460 * 8))
-                            if allowed_data_packet_num > 0:
-                                self.allowed_data["ue{}".format(current_ue_id)]["CBR"] += ((1460 * 8) * allowed_data_packet_num)
-                                self.ue_data["ue{}".format(current_ue_id)]["CBR"] -= ((1460 * 8) * allowed_data_packet_num)
-                                self.rb_allocate_list[rb] = current_ue_id
-                                break
-            
-            rb += 1
-    '''
 
     def rb_allocate(self):
         rb = 0
