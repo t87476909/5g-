@@ -14,10 +14,9 @@ class UeTime:
         self.beam_state = BeamUseFunction.bs_transmit_state 
         self.miss_beam = PredictControlValue.bs_miss_beam #example: bs_id:[miss_beam] (before的beam miss)
         self.ue_id = NetworkSettings.ue_id_list
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.mode = Simulation.mode
-        self.control_variable = SystemInfo.control_variable
         self.bs_id = bs_id
         self.last_bs_id = NetworkSettings.bs_id_list[-1]
         
@@ -25,9 +24,8 @@ class UeTime:
             self.bs_beam_ue.setdefault("{}".format(self.bs_id),dict())
             for i in range(self.beam_number):
                 self.bs_beam_ue[self.bs_id][i] = list()
-        
-        ue_number = len(self.ue_id)
-        for i in range(ue_number):
+
+        for i in range(len(self.ue_id)):
             if self.ue_id[i] not in Simulation.ue_open_time:
                 Simulation.ue_open_time[self.ue_id[i]] = 0 #宣告ue預測醒來的總時間
                 self.ue_beam_allocated[self.ue_id[i]] = dict()
@@ -38,9 +36,10 @@ class UeTime:
     def ue_time_calculate(self,current_ue_index):
         
         current_beam_index = (SystemInfo.system_time - 1) % self.beam_number
-        current_ue_index_number = len(current_ue_index)
-        for i in range(current_ue_index_number):
-            need_beam = self.beam_transmit[self.bs_id][current_beam_index]
+        need_beam = self.beam_transmit[self.bs_id][current_beam_index]
+        if Simulation.ue_move_control == True and NetworkSettings.UE_speed != 0:
+        	self.bs_beam_ue[self.bs_id][need_beam].clear()
+        for i in range(len(current_ue_index)):
             if current_ue_index[i] not in self.bs_beam_ue[self.bs_id][need_beam]:
                 self.bs_beam_ue[self.bs_id][need_beam].append(current_ue_index[i])
 
@@ -51,8 +50,7 @@ class UeTime:
             #print("self.beam_state = ",self.beam_state)
             if self.beam_state == 'static': #靜態波束
                 for beam,ue_id in self.bs_beam_ue[self.bs_id].items(): #beam = 0 ~ 7 ue_id = 該beam底下的ue_id
-                    ue_number = len(ue_id)
-                    for static_i in range(ue_number):
+                    for static_i in range(len(ue_id)):
                         target_ue = "ue{}".format(ue_id[static_i])
                             #print("target_ue(要增加的ue) = ",target_ue)
                         if self.ue_beam_allocated[target_ue][beam] == 0:
@@ -66,8 +64,7 @@ class UeTime:
                         if beam == current_beam:
                             #print("beam = ",beam)
                             #print("current_beam = ",current_beam)
-                            ue_number = len(ue_id)
-                            for dynamic_i in range(ue_number):
+                            for dynamic_i in range(len(ue_id)):
                                 target_ue = "ue{}".format(ue_id[dynamic_i])
                                 #print("target_ue = ",target_ue)
                                 #print("self.ue_beam_allocated[target_ue] = ",self.ue_beam_allocated[target_ue])

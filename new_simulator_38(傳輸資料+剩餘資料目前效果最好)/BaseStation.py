@@ -37,33 +37,37 @@ class BsSched:
         self.current_rate = list()
         self.current_rate_ue_index = list()
         self.bs_beamforming_list = list()
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.history_rate = history_rate
         self.BeamTransmit = BeamTransmit(bs_id) #波束用schedule
         self.BeamForming = BeamForming(bs_id)
         self.Dominate = Dominate(bs_id)
         self.BeamPredict = BeamPredict()
         self.BeamExchange = BeamExchange(bs_id)
+        self.bs_number = NetworkSettings.num_of_bs
         self.UeMove = UeMove()
         self.UeTime = UeTime(bs_id)
         self.mode = Simulation.mode
         self.ue_move_count = 0
 
-    def execute(self): #9/94
+    def execute(self): #從1開始
         #start = time.time()
         self.generate_event_to_self()
         #self.generate_ue_move()
         self.bs_beamforming_list,need_ue_index,bs_transmit_state,need_beam_ue_id = self.BeamTransmit.execute() #基地台波束、該ue_id所對應 需要的波束 #1.65s
         self.current_rate,self.current_rate_ue_index = RateCaulate(self.bs_id,need_ue_index,bs_transmit_state,need_beam_ue_id).snr_rate_Caulate() #當前波束速度 與 當前要被分配的UE #0.5s
         self.perform_resource_assignment(bs_transmit_state) #11.19s
-        self.BeamForming.execute() #0.103s
+        self.BeamForming.execute(bs_transmit_state) #0.103s
         miss_beam,change_location = self.BeamPredict.bs_execute(self.bs_id,need_ue_index) #0.004s
         if self.mode <= 1: #我的方法 0.09s
             self.BeamExchange.execute(miss_beam,change_location)
-            self.Dominate.execute()
+            if self.bs_number > 1:
+                self.Dominate.execute()
+        #start = time.time()
         self.UeTime.ue_time_calculate(self.current_rate_ue_index) #計算ue開啟時間(我的方法的) #0.116
         #end = time.time()
         #Simulation.execution_time += (end - start)
+        #print("system_time = ",SystemInfo.system_time)
         return self.history_rate
 
     def perform_resource_assignment(self,bs_transmit_state): #RB分配
@@ -99,10 +103,13 @@ class BsSched:
         }
         self.event_manager.add_new_event(event['event_trigger_time'], event)
     
-    def generate_ue_move(self):
-        if SystemInfo.system_time % SystemInfo.ue_move_cycle == 0: #時間到了ue座標移動
+    def generate_ue_direction(self):
+        if SystemInfo.system_time % 1000 == 0: #時間到了ue座標移動
             if self.bs_id == 'bs0': #該時間點只會執行一次移動
-                self.UeMove.execute()
+                ue_number = NetworkSettings.ue_id_list
+                for i in range(ue_number):
+                    Distribution_direction = np.random.randint(1,5)
+                    NetworkSettings.ue_move_Distribution_direction[i] = Distribution_direction
     
 
 class BaseStation:
@@ -119,7 +126,7 @@ class BaseStation:
         self.queue_for_ue = dict() #queue_for_ue的每個ue都要再放一個dict
         self.neighbor_distance = NetworkSettings.Neighbor_Distance
         self.ue_number = NetworkSettings.num_of_bs * (NetworkSettings.num_of_ue + NetworkSettings.num_of_ue_overlap)
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.queue_trigger_time = dict()
         self.history_rate = [(10 ** -6) for _ in range(self.ue_number)] #創建儲存過去資料的rate
         
@@ -204,12 +211,12 @@ class BaseStation:
         }
 
         #print("self.queue_trigger_time = ",self.queue_trigger_time)
-        queue_trigger_time = len(self.queue_trigger_time[ue_id][data_type]) 
-        while queue_trigger_time > 0:
+        while len(self.queue_trigger_time[ue_id][data_type]) > 0:
             queue_time = SystemInfo.system_time - self.queue_trigger_time[ue_id][data_type][0]
             if queue_time > packet_deadline_dict[data_type]:
                 del self.queue_trigger_time[ue_id][data_type][0]
-                self.queue_for_ue[ue_id][data_type] = type_data_amount_dict[data_type] * queue_trigger_time
+                DelayCalculate.add_delay_data(data_type,queue_time)
+                self.queue_for_ue[ue_id][data_type] = type_data_amount_dict[data_type] * len(self.queue_trigger_time[ue_id][data_type])
                 DelayCalculate.add_loss_drop_data(data_type)
             else:
                 break

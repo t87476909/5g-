@@ -9,6 +9,7 @@ class ProportionalFairControlValue:
     
 class ProportionalFair:
     def __init__(self, history_rate, current_rb_rate, bs_id, ue_data, ue_id,bs_beamforming_list):
+        self.mapping_table = NetworkSettings.ue_to_bs_mapping_table
         self.Number_resource_block = NetworkSettings.Number_resource_block
         self.current_rb_rate = current_rb_rate
         self.history_rate = copy.copy(history_rate) #好像可以用copy
@@ -17,15 +18,14 @@ class ProportionalFair:
         self.origin_ue_data = ue_data
         self.ue_id = ue_id
         self.number_of_ue = len(self.ue_id)
-
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.bs_beamforming_list = bs_beamforming_list
         self.except_total_rate = 0
 
         self.pf_metric = []
         self.priority_ue_index = []
 
-        self.beta = 0.5
+        self.beta = 0.2
         self.mode = Simulation.mode
 
         self.allowed_data = {}
@@ -143,12 +143,13 @@ class ProportionalFair:
             for i in range(self.beam_number):
                 ProportionalFairControlValue.location_beam_priority[self.bs_id][i] = 0
         
-        for ue in range(self.number_of_ue):
-            current_ue_id = self.ue_id[ue]
-            sum_history_rate += self.history_rate[current_ue_id]
-        user_expected_rate = sum(self.current_rb_rate) * (10 ** 6) #預期該波束的流量
+        #for ue in range(self.number_of_ue):
+        #    current_ue_id = self.ue_id[ue]
+        #    sum_history_rate += self.history_rate[current_ue_id]
 
-        if sum_history_rate == 0:
+        sum_history_rate = sum(self.history_rate)
+
+        if SystemInfo.system_time < self.beam_number:
             priority =  self.except_total_rate
             #priority =  user_expected_rate
         else:
@@ -157,6 +158,7 @@ class ProportionalFair:
             
         ProportionalFairControlValue.location_beam_priority[self.bs_id][beam] = priority
         #if self.bs_id == 'bs0':
-        #    print("beam = {} sum_history_rate = {} user_expected_rate = {} self.except_total_rate = {} ".format(beam,sum_history_rate,user_expected_rate,self.except_total_rate))
+        #    print("beam = {} sum_history_rate = {} self.except_total_rate = {} ".format(beam,sum_history_rate,self.except_total_rate))
+        #    print("priority = ",priority)
         #    print("self.bs_id = {} ProportionalFairControlValue.location_beam_priority[self.bs_id] = {} ".format(self.bs_id,ProportionalFairControlValue.location_beam_priority[self.bs_id]))
         #print("ProportionalFairControlValue.location_beam_priority = ",ProportionalFairControlValue.location_beam_priority)

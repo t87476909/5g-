@@ -8,7 +8,7 @@ class PredictControlValue:
     
 class BeamPredict:
     def __init__(self):
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.bs_number = NetworkSettings.num_of_bs
         self.bs_list = NetworkSettings.bs_id_list
@@ -39,13 +39,11 @@ class BeamPredict:
             if i not in beam:
                 miss_beam.append(i)
 
-        miss_beam_number = len(miss_beam)
-        for j in range(miss_beam_number):
+        for j in range(len(miss_beam)):
             change_location.append(j)
         
         if classify == 0:
-            change_location_number = len(change_location)
-            for index in range(change_location_number):
+            for index in range(len(change_location)):
                 beam[index] = miss_beam[miss_beam_index]
                 miss_beam_index += 1
             return beam

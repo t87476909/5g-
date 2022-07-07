@@ -1,6 +1,6 @@
 from NetworkSettings import NetworkSettings,Simulation,SystemInfo
 from BeamExchange import BeamChangeControl
-from BeamForming import BeamFormingFunction
+from BeamForming import BeamFormingFunction,mode4_control_value
 from BeamPredict import PredictControlValue
 from BeamTransmit import BeamUseFunction
 from Dominate import DominateControlValue
@@ -14,9 +14,12 @@ class StatisticWork:
         self.total_received_data = 0
         self.total_unsent_data = 0
         self.average_UE_awake = 0
-        self.unit_throughput_awake_time = 0
+        self.unit_system_throughput_awake_time = 0
         self.power_saving = 0
         self.ue_number = NetworkSettings.num_of_ue + NetworkSettings.num_of_ue_overlap
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
+        self.bs_dc_range_occupation = NetworkSettings.bs_range *2 - NetworkSettings.Neighbor_Distance
+        self.bs_dc_range_ratio = self.bs_dc_range_occupation / NetworkSettings.bs_range # dc在bs覆蓋範圍的佔比 (dc/全覆蓋) --> 越接近1則dc覆蓋範圍越大
 
     def execute(self):
         self.calculate_ue_data()
@@ -54,6 +57,7 @@ class StatisticWork:
         
         DelayCalculate.throughput_calculate()
         print("System Throughput(Mbps): ", DelayCalculateData.system_throughput)
+        print("Unit BS Throughput(Mbps): ",DelayCalculateData.avg_BS_throughput)
         print("Average UE Throughput(Mbps): ", DelayCalculateData.avg_ue_throughput)
         print("Average DC UE Throughput(Mbps): ", DelayCalculateData.dc_avg_ue_throughput)
         print("UE Fairness: ", DelayCalculateData.fairness)
@@ -71,24 +75,42 @@ class StatisticWork:
         print("Average Loss: ", DelayCalculateData.avg_loss)
         
         #print("所有ue總共開啟時間 = ",Simulation.ue_open_time)
-        self.unit_throughput_awake_time = DelayCalculateData.system_throughput / self.average_UE_awake
+        self.unit_system_throughput_awake_time = DelayCalculateData.system_throughput / self.average_UE_awake
+        self.unit_bs_throughput_awake_time = self.unit_system_throughput_awake_time / NetworkSettings.num_of_bs
         self.power_saving = self.average_UE_awake / NetworkSettings.simulation_time * 100 #開啟時間比率(百分比)
         print("所有ue平均開啟時間 = ",self.average_UE_awake)
-        print("單位醒來時間吞吐量 = ",self.unit_throughput_awake_time)
+        print("單位醒來時間系統吞吐量 = ",self.unit_system_throughput_awake_time)
+        print("單位BS醒來時間吞吐量 = ",self.unit_bs_throughput_awake_time)
         print("開啟時間百分比 = ",self.power_saving)
         print("total_received_data: {}".format(self.total_received_data)) #bytes
         print("total_unsent_data: {}".format(self.total_unsent_data))
         print("執行時間:",Simulation.execution_time)
 
     def write_csv(self):
-        path  = "simulation_result.csv"
+        if Simulation.picture == 0:
+            path  = "ue_number_change.csv"
+        elif Simulation.picture == 1:
+            path  = "ue_move_change.csv"
+        elif Simulation.picture == 2:
+            path  = "bs_number_change.csv"
+        elif Simulation.picture == 3:
+            path  = "beam_number_change.csv"
+        elif Simulation.picture == 4:
+            path  = "bs_distance.csv"
+        elif Simulation.picture == 5:
+            path = "CBR_data_change.csv"
+        else:
+            path  = "video_data_change.csv"
+
         with open(path, 'a+', newline='') as f:
             csv_write = csv.writer(f)
             data_row = [DelayCalculateData.system_throughput, DelayCalculateData.avg_ue_throughput, DelayCalculateData.dc_avg_ue_throughput,
                         DelayCalculateData.fairness, DelayCalculateData.dc_fairness, DelayCalculateData.cbr_delay, DelayCalculateData.voice_delay,
                         DelayCalculateData.video_delay, DelayCalculateData.avg_delay, DelayCalculateData.cbr_loss, DelayCalculateData.voice_loss,
                         DelayCalculateData.video_loss, DelayCalculateData.avg_loss,Simulation.mode,self.average_UE_awake,self.ue_number,
-                        self.unit_throughput_awake_time,self.power_saving]
+                        self.unit_system_throughput_awake_time,self.power_saving,NetworkSettings.UE_speed,NetworkSettings.num_of_bs,self.beam_number,
+                        self.bs_dc_range_ratio,DelayCalculateData.avg_BS_throughput,self.unit_bs_throughput_awake_time,NetworkSettings.CBR_data_change,
+                        NetworkSettings.Video_data_change]
             csv_write.writerow(data_row)
 
     def data_clear(self): #清除上一次檔案測試留存
@@ -96,6 +118,9 @@ class StatisticWork:
         BeamFormingFunction.bs_generator_beam_list.clear()
         BeamFormingFunction.control_variable.clear()
         BeamFormingFunction.bs_generator_beam_state.clear()
+        BeamFormingFunction.location_beam_list.clear()
+        mode4_control_value.beam_number.clear()
+        mode4_control_value.generator_dynamic_beam.clear()
         PredictControlValue.bs_miss_beam.clear()
         BeamUseFunction.all_ue_location.clear()
         BeamUseFunction.bs_location.clear()
@@ -118,6 +143,7 @@ class StatisticWork:
         DelayCalculateData.voice_loss = 0
         DelayCalculateData.video_loss = 0
         DelayCalculateData.avg_loss = 0
+        DelayCalculateData.avg_BS_throughput = 0
         DominateControlValue.bs_dominate.clear()
         NetworkSettings.BS_center_frequency.clear()
         NetworkSettings.ue_id_list.clear()
@@ -143,5 +169,4 @@ class StatisticWork:
         #("NetworkSettings.num_of_ue = ",NetworkSettings.num_of_ue)
         #print("NetworkSettings.num_of_ue_overlap = ",NetworkSettings.num_of_ue_overlap)
         #NetworkSettings.num_of_bs += 5
-        #SystemInfo.control_variable += 10
         

@@ -17,7 +17,7 @@ class RateCaulate:
         self.BS_power = NetworkSettings.BS_transmission_power
         self.Number_resource_block = NetworkSettings.Number_resource_block
         self.beam_angle = NetworkSettings.beam_angle
-        self.beam_number = int(360 / self.beam_angle)
+        self.beam_number = round(360 / self.beam_angle)
         self.bs_number = int(self.bs_id.lstrip('bs'))
         self.need_ue_id = need_beam_ue_id
         # sinr獨用的參數
@@ -40,19 +40,16 @@ class RateCaulate:
         #    print("self.distance = ",self.distance)
         #print("self.bs_id = ",self.bs_id)
         #print("self.need_ue_id = ",self.need_ue_id)
-        need_ue_number = len(self.need_ue_id)
-        for i in range(need_ue_number):
+        for i in range(len(self.need_ue_id)):
             ue_id = 'ue{}'.format(self.need_ue_id[i])
             bs_index = self.mapping_table[ue_id].index(self.bs_id)
             need_pathloss.append(20 * np.log10(self.distance[ue_id][bs_index]/1000) + 20 * np.log10(self.frequency[self.bs_number]) + 32.44 - self.BS_antenna_gain - self.UE_antenna_gain)
-        
-        need_pathloss_number = len(need_pathloss)
-        for i in range(need_pathloss_number):
+
+        for i in range(len(need_pathloss)):
             need_received_power.append(self.BS_power - need_pathloss[i] - 2.15) #dbm = dbm + db
             need_received_power[i] = 10 **((need_received_power[i]-30)/10) # bs下ue的接收power Watt
         
-        need_received_power_number = len(need_received_power)
-        for i in range(need_received_power_number):
+        for i in range(len(need_received_power)):
             snr.append(need_received_power[i] / noise_power)
 
         snr_db = 10 * np.log10(snr) #np.array
@@ -62,8 +59,7 @@ class RateCaulate:
         all_rb_rate_ms = all_rate_mpbs_sec / 1000 / self.Number_resource_block
         
         need_rb_rate_ms = list()
-        all_rb_rate_ms_number = len(all_rb_rate_ms)
-        for i in range(all_rb_rate_ms_number):
+        for i in range(len(all_rb_rate_ms)):
             need_rb_rate_ms.append(all_rb_rate_ms[i])
         
         return need_rb_rate_ms,self.need_ue_id

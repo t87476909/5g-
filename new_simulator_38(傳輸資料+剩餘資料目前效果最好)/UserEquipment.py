@@ -35,8 +35,7 @@ class UserEquipment:
         self.ue_id = "ue{}".format(ue_id)
         self.event_manager = event_manager
         data_type = ['voice','video','CBR']
-        data_type_number = len(data_type)
-        for i in range(data_type_number):
+        for i in range(len(data_type)):
             tg_id = self.ue_id + "{}".format(data_type[i])
             tg = TrafficGenerator(self.ue_id, tg_id, event_manager)
             NetworkSettings.object_info_dict[tg_id] = tg

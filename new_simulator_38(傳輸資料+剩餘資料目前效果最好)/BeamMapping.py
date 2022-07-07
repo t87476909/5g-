@@ -6,7 +6,7 @@ import cmath
 class BeamMapping:
     def __init__(self,bs_location,ue_overlap_location_list):
         self.beam_angle = NetworkSettings.beam_angle
-        self.beam_number = int(360 / self.beam_angle)
+        self.beam_number = round(360 / self.beam_angle)
         self.bs_list = NetworkSettings.bs_id_list
         self.bs_location = bs_location
         self.ue_overlap_location = ue_overlap_location_list
@@ -16,17 +16,16 @@ class BeamMapping:
         self.num_ue = NetworkSettings.num_of_ue
         self.num_overlap_ue = NetworkSettings.num_of_ue_overlap
         self.mapping_table = NetworkSettings.ue_to_bs_mapping_table
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
 
     def execute(self):
         self.mapping()
 
     def mapping(self):
-        bs_number = len(self.bs_location)
-        for i in range(bs_number):
+        for i in range(len(self.bs_location)):
             NetworkSettings.bs_neighbor.setdefault("bs{}".format(i),list())
             NetworkSettings.bs_neighbor["bs{}".format(i)].append("bs{}".format(i))
-            for j in range(bs_number):
+            for j in range(len(self.bs_location)):
                 if self.bs_location[i][0] == self.bs_location[j][0]: #bs間的x相同
                     if (self.bs_location[i][1] + self.neighbor_distance) == self.bs_location[j][1]: #y往上一個distance單位
                         #position = 1
@@ -57,8 +56,7 @@ class BeamMapping:
         #neighbor_ue_beam_list = list(set(neighbor_ue_beam_list))
         #print("target_ue_beam_list = ",target_ue_beam_list)
         #print("neighbor_ue_beam_list = ",neighbor_ue_beam_list)
-        target_ue_beam_number = len(target_ue_beam_list)
-        for beam_neighbor_index in range(target_ue_beam_number):
+        for beam_neighbor_index in range(len(target_ue_beam_list)):
             NetworkSettings.bs_beam_neighbor["bs{}".format(i)]["bs{}".format(j)][target_ue_beam_list[beam_neighbor_index]] = neighbor_ue_beam_list[beam_neighbor_index]
 
     def beam_neighbor(self,target_bs,neighbor_bs):    
@@ -79,8 +77,7 @@ class BeamMapping:
                 ue_index = NetworkSettings.ue_id_list.index(ue_id) #所有ue的位置
                 location_index_list.append(ue_index - overlap_start_num) #求重疊區域的ue位置
 
-        location_index_number = len(location_index_list)
-        for j in range(location_index_number):
+        for j in range(len(location_index_list)):
             if location_index_list[j] >= 0:
                 ue_location = self.ue_overlap_location[location_index_list[j]]
                 target_ue_beam_list.append(self.beamclassification(ue_location,target_bs_location)) #目標與鄰居基地台的ue在哪個波束底下

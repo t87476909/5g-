@@ -23,7 +23,7 @@ class BeamTransmit:
         self.num_overlap_ue = NetworkSettings.num_of_ue_overlap
         self.beam_angle = NetworkSettings.beam_angle
         self.bs_id = bs_id
-        self.beam_number = int(360 / self.beam_angle)
+        self.beam_number = round(360 / self.beam_angle)
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.mapping_table = NetworkSettings.ue_to_bs_mapping_table
         self.mode = Simulation.mode
@@ -37,7 +37,7 @@ class BeamTransmit:
             self.transmit_beam() #發射波束
         need_beam_index,need_beam_ue_id = self.beam_search()
         #print("之前產生的波束 = ",BeamFormingFunction.bs_generator_beam_list[self.bs_id])
-        #if self.bs_id == 'bs0': 
+        #if self.bs_id == 'bs0' and SystemInfo.system_time % 8 == 0: 
         #    print("bs_id = {} systme_time = {} beamtransmit = {} state = {} ".format(self.bs_id,SystemInfo.system_time, BeamUseFunction.bs_transmit_beam[self.bs_id],BeamUseFunction.bs_transmit_state))
         return BeamUseFunction.bs_transmit_beam[self.bs_id],need_beam_index,BeamUseFunction.bs_transmit_state,need_beam_ue_id
     
@@ -75,17 +75,14 @@ class BeamTransmit:
                 need_ue_id_list.append(ue_index)
         #if self.bs_id == 'bs0':
         #    print("need_ue_id_list = ",need_ue_id_list)
-        need_ue_id_number = len(need_ue_id_list)
-        for i in range(need_ue_id_number): #所有需要的ue_id遍歷
+        for i in range(len(need_ue_id_list)): #所有需要的ue_id遍歷
             ue_location = self.all_ue_location[need_ue_id_list[i]]
             self.ue_beam_list.append(self.beamclassification(ue_location,bs_location))
 
         beam_index = (SystemInfo.system_time - 1) % self.beam_number #該輪的第幾次波束
-        ue_beam_number = len(self.ue_beam_list)
-        need_beam_index = [ i for i in range(ue_beam_number) if self.ue_beam_list[i] == BeamUseFunction.bs_transmit_beam[self.bs_id][beam_index] ] #需要第幾個beam內的波束        
-        
-        need_beam_number = len(need_beam_index)
-        for i in range(need_beam_number):
+        need_beam_index = [ i for i in range(len(self.ue_beam_list)) if self.ue_beam_list[i] == BeamUseFunction.bs_transmit_beam[self.bs_id][beam_index] ] #需要第幾個beam內的波束
+
+        for i in range(len(need_beam_index)):
             need_beam_ue_id.append(need_ue_id_list[need_beam_index[i]]) #該波束需要的ue_id
 
         return need_beam_index,need_beam_ue_id

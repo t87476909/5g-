@@ -15,7 +15,7 @@ class ValueControlData:
 class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行beam_number次的時候就會進行統整)
     def __init__(self,bs_id,bs_beamforming_list,ue_data,allowed_data,current_rate_ue_index,bs_transmit_state):
         self.bs_id = bs_id
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.beamforming_list = bs_beamforming_list #波束列表
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.current_beam_index = (SystemInfo.system_time - 1) % self.beam_number
@@ -61,7 +61,6 @@ class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行b
 
     def probability_calculate(self):
         if self.beam_index == 0 and SystemInfo.system_time !=0: #波束輪過一輪才會執行一次 波束為 0~7
-            all_probability = list()
             z_normalization_throughtput = preprocessing.scale(ValueControlData.beam_throughput[self.bs_id], axis=0, with_mean=True, with_std=True, copy=True)
             probability = self.softmax(z_normalization_throughtput)
             
@@ -71,12 +70,11 @@ class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行b
             if 0 in ValueControlData.beam_throughput[self.bs_id]: #判斷是否有流量為0的波束
                 zero_throughput_probability = 0
                 throughput_probability = 0
-                beam_throughput_number = len(ValueControlData.beam_throughput[self.bs_id])
-                for zero_probability_index in range(beam_throughput_number): #紀錄beam流量為0的機率總和
+                for zero_probability_index in range(len(ValueControlData.beam_throughput[self.bs_id])): #紀錄beam流量為0的機率總和
                     if ValueControlData.beam_throughput[self.bs_id][zero_probability_index] == 0:
                         zero_throughput_probability += probability[zero_probability_index]
                         probability[zero_probability_index] = 0
-                for probability_index in range(beam_throughput_number):
+                for probability_index in range(len(ValueControlData.beam_throughput[self.bs_id])):
                     if ValueControlData.beam_throughput[self.bs_id][probability_index] != 0:
                         probability[probability_index] = probability[probability_index] / (1 - zero_throughput_probability)
                         throughput_probability += probability[probability_index]
@@ -84,59 +82,33 @@ class ValueCalculate: #基地台每打一次波束就會執行一次 (當執行b
             if 0 in ValueControlData.transmission_beam_throughput[self.bs_id]: #判斷是否有流量為0的波束
                 zero_throughput_probability = 0
                 throughput_probability = 0
-                transmission_beam_throughput_number = len(ValueControlData.transmission_beam_throughput[self.bs_id])
-                for zero_probability_index in range(transmission_beam_throughput_number): #紀錄beam流量為0的機率總和
+                for zero_probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])): #紀錄beam流量為0的機率總和
                     if ValueControlData.transmission_beam_throughput[self.bs_id][zero_probability_index] == 0:
                         zero_throughput_probability += transmission_probability[zero_probability_index]
                         transmission_probability[zero_probability_index] = 0
-                for probability_index in range(transmission_beam_throughput_number):
+                for probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])):
                     if ValueControlData.transmission_beam_throughput[self.bs_id][probability_index] != 0:
                         transmission_probability[probability_index] = transmission_probability[probability_index] / (1 - zero_throughput_probability)
                         throughput_probability += transmission_probability[probability_index]
-            #print("sum = {} transmission_probability = {} ".format(sum(transmission_probability),transmission_probability))
-            #print("sum = {} probability = {}".format(sum(probability),probability))
+
             sum_all_probability = sum(transmission_probability) + sum(probability)
             if sum_all_probability > 1.1:
                 for i in range(self.beam_number):
                     probability[i] = (transmission_probability[i] + probability[i]) / 2
-                    #all_probability.append(probability[i])
-                    #all_probability.appned(final_probability)
-                #probability = np.array(probability)
-                #probability /= probability.sum()  # normalize
+
                 ValueControlData.beam_probability[self.bs_id] = probability
             elif sum(probability) > 0.1 and sum(transmission_probability) < 0.1:
-                #probability /= probability.sum()
                 ValueControlData.beam_probability[self.bs_id] = probability
             elif sum(probability) < 0.1 and sum(transmission_probability) > 0.1:
-                #transmission_probability /= transmission_probability.sum()
                 ValueControlData.beam_probability[self.bs_id] = transmission_probability
-            #print("sum變化前 = {} ValueControlData.beam_probability[self.bs_id] = {} ".format(sum(ValueControlData.beam_probability[self.bs_id]),ValueControlData.beam_probability[self.bs_id]))
-            #print("   ")
-            #elif sum_all_probability < 0.1:
+            else:
+                none_data_probability = list()
+                probability_input = 1 / self.beam_number
+                for j in range(self.beam_number):
+                    none_data_probability.append(probability_input)
+                np_probability_data = np.array(none_data_probability)
+                ValueControlData.beam_probability[self.bs_id] = np_probability_data
 
-            '''
-            if sum(probability) == 0: #表示基地台底下完全沒有剩餘流量ue (晚點記得改成transmission_beam)
-                z_transmission_normalization_throughtput = preprocessing.scale(ValueControlData.transmission_beam_throughput[self.bs_id], axis=0, with_mean=True, with_std=True, copy=True)
-                transmission_probability = self.softmax(z_transmission_normalization_throughtput)
-                if 0 in ValueControlData.transmission_beam_throughput[self.bs_id]: #判斷是否有流量為0的波束
-                    zero_throughput_probability = 0
-                    throughput_probability = 0
-                    for zero_probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])): #紀錄beam流量為0的機率總和
-                        if ValueControlData.transmission_beam_throughput[self.bs_id][zero_probability_index] == 0:
-                            zero_throughput_probability += transmission_probability[zero_probability_index]
-                            transmission_probability[zero_probability_index] = 0
-                    for probability_index in range(len(ValueControlData.transmission_beam_throughput[self.bs_id])):
-                        if ValueControlData.transmission_beam_throughput[self.bs_id][probability_index] != 0:
-                            transmission_probability[probability_index] = transmission_probability[probability_index] / (1 - zero_throughput_probability)
-                            throughput_probability += transmission_probability[probability_index]
-                if sum(transmission_probability) == 0: #表示基地台底下完全沒有ue
-                    for j in range(len(transmission_probability)):
-                        transmission_probability[j] = 1 / self.beam_number
-                for index in range(len(probability)):
-                    probability[index] = transmission_probability[index]
-                '''
-            #ValueControlData.beam_probability[self.bs_id] = probability
-            #print("final probability = ",probability)
     def softmax(self,throughtput): #區域總流量正規化
         throughtput = throughtput - np.max(throughtput)
         exp_throughtput = np.exp(throughtput)

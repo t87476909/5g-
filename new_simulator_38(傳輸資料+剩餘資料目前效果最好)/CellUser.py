@@ -10,30 +10,31 @@ class CellUser:
         self.overlap_length = NetworkSettings.Neighbor_Distance - NetworkSettings.bs_range
         self.beam_eliminate = NetworkSettings.beam_eliminate #每個基地台被清除的波束
         self.beam_angle = NetworkSettings.beam_angle
-        self.beam_number = int(360 / self.beam_angle)
-        self.clear_number = Simulation.random_beam_clear_number + 1
-    
+        self.beam_number = round(360 / self.beam_angle)
+        #self.clear_number = Simulation.random_beam_clear_number + 1
+        self.clear_number = round(self.beam_number / 3)
+
     def random_clear_beam(self):
         for i in range(NetworkSettings.num_of_bs):
             self.beam_eliminate[i] = list()
-            clear_count = random.randrange(1,self.clear_number) #沒有ue的beam
-            for j in range(clear_count):
-                clear_beam = random.randrange(0,7)
-                self.beam_eliminate[i].append(clear_beam)
+            if self.clear_number != 0 and self.beam_number != 2:
+                clear_count = random.randrange(0,self.clear_number + 1) #沒有ue的beam
+                for j in range(clear_count):
+                    clear_beam = random.randrange(0,self.beam_number)
+                    self.beam_eliminate[i].append(clear_beam)
         #print("被清除的波束 = ",self.beam_eliminate)
     def clear_beam(self):
-        beam_clear_number = len(NetworkSettings.beam_clear_index)
         for i in range(NetworkSettings.num_of_bs):
             self.beam_eliminate[i] = list()
-            for j in range(beam_clear_number):
+            for j in range(len(NetworkSettings.beam_clear_index)):
                 self.beam_eliminate[i].append(NetworkSettings.beam_clear_index[j])
         #print("被清除的波束 = ",self.beam_eliminate)
     def getRandomPointInrectangle(self,x,y,i): #if (2*NetworkSettings.bs_range > NetworkSettings.Neighbor_Distance) (基地台範圍有重疊)
         thePoint = [0,0]
-        while 1:
+        while True:
             precision = 3
-            pr_x = np.sqrt(self.overlap_length * self.overlap_length * random.randint(0, 10 ** precision) / float(10 ** precision)) #pr生成為 0 ~ self.overlap_length
-            pr_y = np.sqrt(self.overlap_length * self.overlap_length * random.randint(0, 10 ** precision) / float(10 ** precision))
+            pr_x = math.sqrt(self.overlap_length * self.overlap_length * random.randint(0, 10 ** precision) / float(10 ** precision)) #pr生成為 0 ~ self.overlap_length
+            pr_y = math.sqrt(self.overlap_length * self.overlap_length * random.randint(0, 10 ** precision) / float(10 ** precision))
             theta_x = random.uniform(-1, 1)
             theta_y = random.uniform(-1, 1)
             thePoint[0] = x + pr_x * theta_x
@@ -41,6 +42,9 @@ class CellUser:
             #thePoint = (x + pr_x * theta_x , y + pr_y * theta_y)
             distance_x = thePoint[0] - x #x間距
             distance_y = thePoint[1] - y #y間距
+            distance = math.sqrt(distance_x**2 + distance_y**2)
+            if distance > NetworkSettings.bs_range:
+                continue
             polar_location = complex(distance_x,distance_y)
             polar_location = cmath.polar(polar_location)
             angle = math.degrees(polar_location[1])
@@ -55,7 +59,7 @@ class CellUser:
 
     def getRandomPointInOverlap(self,x,y,i): #重複覆蓋範圍
         thePoint = [0,0]
-        while 1:
+        while True:
             if x == 0 and y == 0: #分配1、2、3、4(上右下左)
                 Distribution_direction = np.random.randint(1,5)
             elif x == 0: #分配1、2、4(上右左)
@@ -88,9 +92,9 @@ class CellUser:
         UE_generator_location = [0,0]
         precision = 3
         theta = random.uniform(-1, 1)
-        pr = np.sqrt(self.overlap_width * self.overlap_width * random.randint(0, 10 ** precision) / float(10 ** precision))
+        pr = math.sqrt(self.overlap_width * self.overlap_width * random.randint(0, 10 ** precision) / float(10 ** precision))
         length = self.overlap_length + pr
-        limit = np.sqrt(abs(NetworkSettings.bs_range **2 - length**2))
+        limit = math.sqrt(abs(NetworkSettings.bs_range **2 - length**2))
         if Distribution_direction == 1: #生成上方向
             final_y = y + length
             final_x = x + limit * theta
@@ -111,7 +115,7 @@ class CellUser:
 
     def getRandomPointInCircle(self,x,y): #if (2*NetworkSettings.bs_range <= NetworkSettings.Neighbor_Distance) (基地台範圍沒有重疊)
         precision = 3
-        pr = np.sqrt(NetworkSettings.bs_range * NetworkSettings.bs_range * random.randint(0, 10 ** precision) / float(10 ** precision))
+        pr = math.sqrt(NetworkSettings.bs_range * NetworkSettings.bs_range * random.randint(0, 10 ** precision) / float(10 ** precision))
         theta = 2 * np.pi * random.random()
         thePoint = ( x + pr * np.cos(theta), y + pr * np.sin(theta))
         #print(thePoint)

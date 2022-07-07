@@ -11,6 +11,7 @@ class DelayCalculateData:
     loss_data = {"CBR": {"drop_data_amount": 0, "sent_data_amount": 0}, "voice": {"drop_data_amount": 0, "sent_data_amount": 0}, "video": {"drop_data_amount": 0, "sent_data_amount": 0}}
 
     system_throughput = 0
+    avg_BS_throughput = 0
     avg_ue_throughput = 0
     dc_avg_ue_throughput = 0
 
@@ -67,6 +68,7 @@ class DelayCalculate: #基地台每打一次波束就會執行一次 (當執行b
             total_ue_data_amount += data_amount
             total_square_data_amount += (data_amount ** 2)
         DelayCalculateData.system_throughput = total_ue_data_amount * 1000 / SystemInfo.system_time / (10 ** 6)
+        DelayCalculateData.avg_BS_throughput = DelayCalculateData.system_throughput / NetworkSettings.num_of_bs
         DelayCalculateData.avg_ue_throughput = total_ue_data_amount * 1000 / SystemInfo.system_time / (len(NetworkSettings.ue_to_bs_mapping_table)) / (10 ** 6)
         DelayCalculateData.fairness = (total_ue_data_amount ** 2) / ((len(NetworkSettings.ue_to_bs_mapping_table)) * total_square_data_amount)
 

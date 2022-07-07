@@ -12,7 +12,7 @@ class BeamExchange:
         self.beam_list = BeamFormingFunction.bs_generator_beam_list #bs0:{'time_before_last_time':[],'last_time':[]}
         self.beam_state = BeamFormingFunction.bs_generator_beam_state[bs_id]['last_time_state']
         self.bs_id = bs_id
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.probilibty = ValueControlData.beam_probability #example: bs_id:[probility_list]
         self.sort_probility = list()
@@ -51,8 +51,7 @@ class BeamExchange:
                 
                 while unfinished_num > 0:
                     min_probilibty = min(unfinished_probilibty) #找剩餘波束最小機率(不包含0 因為機率為0的波束不會出現)
-                    probilibty_number = len(probilibty)
-                    remove_element = [i for i in range(probilibty_number) if probilibty[i] == min_probilibty] #可能會有重複機率的波束出現
+                    remove_element = [i for i in range(len(probilibty)) if probilibty[i] == min_probilibty] #可能會有重複機率的波束出現
                     remove_element = random.choice(remove_element)
                     #print("unfinished_probilibty = ",unfinished_probilibty)
                     #print("min_probilibty = ",min_probilibty)

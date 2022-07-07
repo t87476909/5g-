@@ -55,9 +55,9 @@ class UeMove:
             for j in range(len(self.bs_id_list)): # 所有基地台
                 bs_ue_x_distance = self.bs_location[j][0] - self.all_ue_location[i][0]
                 bs_ue_y_distance = self.bs_location[j][1] - self.all_ue_location[i][1]
-                if np.sqrt(bs_ue_x_distance**2 + bs_ue_y_distance**2) < self.bs_range: #UE在基地台覆蓋範圍內
+                if math.sqrt(bs_ue_x_distance**2 + bs_ue_y_distance**2) < self.bs_range: #UE在基地台覆蓋範圍內
                     self.mapping_table["ue{}".format(i)].append("bs{}".format(j))
-                    self.distance['ue{}'.format(i)].append(np.sqrt(bs_ue_x_distance**2 + bs_ue_y_distance**2))
+                    self.distance['ue{}'.format(i)].append(math.sqrt(bs_ue_x_distance**2 + bs_ue_y_distance**2))
             if len(self.mapping_table["ue{}".format(i)]) == 0: #表示該ue沒有在任何基地台的範圍內
                 self.check_ue_in_bs(i)
             elif len(self.mapping_table["ue{}".format(i)]) >= 2: #表示該ue在overlapping的ue_list內
@@ -75,7 +75,7 @@ class UeMove:
 
         distance_x = bs_x_location - ue_location[0]
         distance_y = bs_y_location - ue_location[1]
-        self.distance['ue{}'.format(ue)].append(np.sqrt(distance_x**2 + distance_y**2)) #距離更新
+        self.distance['ue{}'.format(ue)].append(math.sqrt(distance_x**2 + distance_y**2)) #距離更新
 
     def beam_neighbor_change(self):
 

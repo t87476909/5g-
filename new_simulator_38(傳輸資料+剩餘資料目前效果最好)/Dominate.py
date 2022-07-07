@@ -21,7 +21,7 @@ class Dominate:
         self.beam_throughput = ValueControlData.beam_throughput #example:bs_id:[beam_throughput]
         self.bs_beam_list = BeamFormingFunction.bs_generator_beam_list #example:[bs_id][last or before]
         self.beam_change_or_not = BeamChangeControl.beam_change_or_not #[bs_id][beam list]
-        self.beam_number = int(360 / NetworkSettings.beam_angle)
+        self.beam_number = round(360 / NetworkSettings.beam_angle)
         self.beam_index = SystemInfo.system_time % self.beam_number
         self.complete_bs = 0
         self.bs_allocated = list() #example:[bs_id]
@@ -39,8 +39,8 @@ class Dominate:
         self.bs_throughput_calculate()
         if self.beam_index == 0 and self.bs_throughput[self.bs_id]['last_time'] != None:
             if self.bs_id == self.last_bs: #若所有的dominate都決定完了
-                bs_list_number = len(self.bs_list)
-                for i in range(bs_list_number):
+
+                for i in range(len(self.bs_list)):
                     bs = self.bs_list[i]
                     self.coordinate_mask[bs] = dict()
                     for j in range(self.beam_number):
@@ -77,8 +77,7 @@ class Dominate:
         for target_bs_id,neighbor_bs_id_list in self.bs_neighbor.items():
             max_throughput = 0
             target_throughput = self.bs_throughput[target_bs_id]['last_time']
-            neighbor_bs_id_number = len(neighbor_bs_id_list)
-            for i in range(neighbor_bs_id_number):
+            for i in range(len(neighbor_bs_id_list)):
                 neighbor_bs = neighbor_bs_id_list[i]
                 neighbor_throughput = self.bs_throughput[neighbor_bs]['last_time']
                 #print("target_throughput = ",target_throughput)
@@ -112,10 +111,9 @@ class Dominate:
             if target_bs in Dominator:
                 self.bs_allocated.append(target_bs)
                 self.complete_bs += 1 #
-                if self.mode == 1:
-                    neighbor_throughput = self.min_neighbor_throughput(target_bs)
-                neighbor_bs_number = len(neighbor_bs)
-                for j in range(neighbor_bs_number):
+                if self.mode == 1 and self.bs_number > 1:
+                    neighbor_throughput = self.max_neighbor_throughput(target_bs)
+                for j in range(len(neighbor_bs)):
                     if neighbor_bs[j] != target_bs and neighbor_bs[j] not in self.bs_allocated:
                         if self.mode == 1:
                             self.coordinate_two(target_bs,neighbor_bs[j],neighbor_throughput)
@@ -150,7 +148,7 @@ class Dominate:
                                         exchange = -i
                                 self.bs_beam_list[neighbor_bs]['last_time'][i],self.bs_beam_list[neighbor_bs]['last_time'][i+exchange] = self.bs_beam_list[neighbor_bs]['last_time'][i+exchange],self.bs_beam_list[neighbor_bs]['last_time'][i]
     
-    def min_neighbor_throughput(self,target_bs):
+    def max_neighbor_throughput(self,target_bs):
         neighbor_beam_throughput_dict = dict() #[beam_index][neighbor_beam_throughput] 紀錄可以配合的波束 的流量值
         for i in range(self.beam_number):
             neighbor_beam_throughput_dict.setdefault(i, [])
@@ -171,7 +169,7 @@ class Dominate:
         for i in range(self.beam_number):
             if self.beam_change_or_not[neighbor_bs][i] != 1: #該基地台的波束不能被修改
                 if len(neighbor_throughput[i]) != 0:
-                    min_neighbor_throughput = min(neighbor_throughput[i]) #可以交換的最小流量鄰居波束要被交換
+                    max_neighbor_throughput = max(neighbor_throughput[i]) #可以交換的最大流量鄰居波束要被交換
                 current_target_beam = self.bs_beam_list[target_bs]['last_time'][i] #當前目標波束
                 current_neighbor_beam = self.bs_beam_list[neighbor_bs]['last_time'][i] #當前鄰居波束
                 #print("current beam = {} neighbor_beam = {} ".format(current_target_beam,current_neighbor_beam))
@@ -180,9 +178,9 @@ class Dominate:
                     if target_beam == current_target_beam and neighbor_beam == current_neighbor_beam: #打出的波束與鄰居打出的波束有相交
                         self.beam_change_or_not[neighbor_bs][i] = 1 #該鄰居波束設定為不能被修改
                         #有相交的波束不用動
-                    if target_beam == current_target_beam and neighbor_beam != current_neighbor_beam: #打出的波束與鄰居打出的波束沒有相交(所以要讓其相交->根據最低波束流量來決定)
+                    if target_beam == current_target_beam and neighbor_beam != current_neighbor_beam: #打出的波束與鄰居打出的波束沒有相交(所以要讓其相交->根據最高波束流量來決定)
                         neighbor_beam_throughput = ValueControlData.beam_throughput[neighbor_bs][current_neighbor_beam]
-                        if neighbor_beam != None and min_neighbor_throughput == neighbor_beam_throughput: #表示該波束有鄰居波束
+                        if neighbor_beam != None and max_neighbor_throughput == neighbor_beam_throughput: #表示該波束有鄰居波束
                             self.bs_beam_list[neighbor_bs]['last_time'][i] = neighbor_beam
                             self.beam_change_or_not[neighbor_bs][i] = 1
         #print("final = ",self.bs_beam_list[neighbor_bs]['last_time'])
