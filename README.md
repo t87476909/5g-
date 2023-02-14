@@ -23,8 +23,10 @@ python with 5G BaseStation simulation(論文模擬)
 
 我們在仿真結果證明，與其他方法相比而言，我們所提出的波束調度方式大幅提升了系統吞吐量，並且大幅降低了平均封包的被丟棄率與平均延遲統，同時強調了UE應當知曉基地台波束排程所帶來的節電優勢，並在基地台協作過程當中，照顧到基地台資源分配不均的問題
 
-![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_1.png)
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_1.PNG)
 
-![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_2.png)
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_2.PNG)
 
-![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_5.png)
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_3.PNG)
+
+![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_4.PNG)
