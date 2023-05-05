@@ -67,14 +67,20 @@ In our simulation(OUR、OUR_1rx、OUR_2rx) results, we have demonstrated that ou
 # system
 ## Simulation System Features:
 1.User behavior, base station behavior, and packet generation behavior can be customized in BaseStation.py, UserEquipment.py, and TrafficGenerator.py files, respectively.
+
 2.The system considers user mobility, multiple base stations, different packet formats, base station overlap ratio, csv file generation, simulation time, and many parameters that can be customized in NetworkSetting.py.
+
 3.Beamforming in the system is generated and transmitted based on the number of beams in a cycle.
+
 4.The system's methods allow knowing which beams the base station will transmit.
+
 5.The resource block allocation in the system is performed using the PF method.
 ## Simulation System Shortcomings:
 
 1.The system does not consider the case of multiple beams transmitted by a base station.
+
 2.The base station placement is not based on the hexagonal grid layout (placed in a square grid instead).
+
 3.The user equipment (UE) has not defined the appropriate times for opening and sleeping.
 
 # Analog picture with UENumPicture.py
