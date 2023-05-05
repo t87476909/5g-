@@ -1,7 +1,7 @@
 # 5g-
 A simulation of 5G multi-base station beam scheduling implemented using Python.(論文模擬)
 
-Paper Hyperlink: [GitHub](https://hdl.handle.net/11296/3wr446)
+Paper Hyperlink: [https://hdl.handle.net/11296/3wr446]
 
 1.main.py: The main program execution file
 
