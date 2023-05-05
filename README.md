@@ -5,7 +5,7 @@ Paper Hyperlink: [https://hdl.handle.net/11296/3wr446]
 
 # Achievement
 
-In our simulation results, we have demonstrated that our proposed beam scheduling method significantly improves system throughput and reduces the average packet drop rate and delay compared to other methods. We also emphasize the power-saving advantages of base station beam scheduling for UEs and address the issue of uneven resource allocation among base stations in cooperative processes. Compared to traditional static beamforming (FIX), our method increases throughput by 23% and reduces packet loss by 20% at the same power consumption.
+In our simulation(OUR、OUR_1rx、OUR_2rx) results, we have demonstrated that our proposed beam scheduling method significantly improves system throughput and reduces the average packet drop rate and delay compared to other methods. We also emphasize the power-saving advantages of base station beam scheduling for UEs and address the issue of uneven resource allocation among base stations in cooperative processes. Compared to traditional static beamforming (FIX), our method increases throughput by 23% and reduces packet loss by 20% at the same power consumption.
 
 # File Description
 ## System simulation executable file
