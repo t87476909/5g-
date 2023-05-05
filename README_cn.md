@@ -1,5 +1,5 @@
 # 5g-
-python with 5G BaseStation simulation(論文模擬)
+利用python做出的5G多基地台波束排程模擬.(論文模擬)
 
 1. main.py 程式主程序執行檔案
 2. NetworkSetting.py 網路架構設定
