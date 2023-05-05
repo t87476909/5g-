@@ -4,7 +4,7 @@ class NetworkSettings:
     num_of_ue_overlap = 56 #單一基地台的UE數量(重疊區域)
     simulation_time = 5000 #模擬時間 ms
     bs_range = 500 #基地台覆蓋範圍(m)
-    Neighbor_Distance = 750 #基地台與基地台間距(m) < 500就會完全重疊了 #900和950會出錯明天看
+    Neighbor_Distance = 750 #基地台與基地台間距(m) < 500就會完全重疊了
     beam_angle = 45 #波束角度45 波束角度沒辦法被360整除會有錯
     BS_transmission_power = 23 #基地台傳輸功率(tx power)
     UE_transmission_power = 0.25 #0.25W(瓦特) = 23.98 dbm
@@ -32,11 +32,6 @@ class NetworkSettings:
     beam_eliminate = dict() #基地台一開始哪些波束裡面不會有ue
 
     ue_move_direction = dict() #ue移動方向改變
-
-    #基地台個數36(固定)
-    #執行時間 30000ms
-    #ue個數 25、50、75、100、125、25 * 9 (會變的參數比例1:4)
-    #control_variable 10、20...90
 
 class SystemInfo:
     system_time = 0
