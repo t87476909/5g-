@@ -1,13 +1,13 @@
 # 5g-
 python with 5G BaseStation simulation(論文模擬)
 
-1.main.py: The main program execution file.
+1.main.py: The main program execution file
 
-2.NetworkSetting.py: Network architecture configuration.
+2.NetworkSetting.py: Network architecture configuration
 
-3.CellUser.py: Generates random user coordinates.
+3.CellUser.py: Generates random user coordinates
 
-4.BeamMapping.py: Generates the relationship between base station beams.
+4.BeamMapping.py: Generates the relationship between base station beams
 
 5.EventManager.py: Event management program.
 
