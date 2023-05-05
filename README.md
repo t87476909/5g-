@@ -3,11 +3,11 @@ A simulation of 5G multi-base station beam scheduling implemented using Python.(
 
 Paper Hyperlink: [https://hdl.handle.net/11296/3wr446]
 
-# achievement
+# Achievement
 
 In our simulation results, we have demonstrated that our proposed beam scheduling method significantly improves system throughput and reduces the average packet drop rate and delay compared to other methods. We also emphasize the power-saving advantages of base station beam scheduling for UEs and address the issue of uneven resource allocation among base stations in cooperative processes. Compared to traditional static beamforming (FIX), our method increases throughput by 23% and reduces packet loss by 20% at the same power consumption.
 
-# file description
+# File Description
 1.main.py: The main program execution file
 
 2.NetworkSetting.py: Network architecture configuration
