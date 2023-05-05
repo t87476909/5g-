@@ -8,6 +8,7 @@ Paper Hyperlink: [https://hdl.handle.net/11296/3wr446]
 In our simulation results, we have demonstrated that our proposed beam scheduling method significantly improves system throughput and reduces the average packet drop rate and delay compared to other methods. We also emphasize the power-saving advantages of base station beam scheduling for UEs and address the issue of uneven resource allocation among base stations in cooperative processes. Compared to traditional static beamforming (FIX), our method increases throughput by 23% and reduces packet loss by 20% at the same power consumption.
 
 # File Description
+## System simulation executable file
 1.main.py: The main program execution file
 
 2.NetworkSetting.py: Network architecture configuration
@@ -46,7 +47,22 @@ In our simulation results, we have demonstrated that our proposed beam schedulin
 
 19.DelayCalculate.py: Calculates average delay, packet drop rate, and output flow rate
 
-# Analog picture
+## System simulation picture generation
+20.BeamNumPicture.py:Generating images with single base station beam counts as the x-axis variable.
+
+21.BsNumPicture.py:Generating images with base station count as the x-axis variable.
+
+22.CBRDataPicture.py:Generating images with CBR data amount as the x-axis variable.
+
+23.DcRatioPicture.py:Generating images with dual connectivity coverage ratio as the x-axis variable.
+
+24.UENumPicture.py:Generating images with single base station user count as the x-axis variable.
+
+25.UeMovePicture.py:Generating images with user speed as the x-axis variable.
+
+26.VideoDataPicture.py:Generating images with Video data amount as the x-axis variable.
+
+# Analog picture with UENumPicture.py
 
 ![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_1.PNG)
 
