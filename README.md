@@ -9,58 +9,58 @@ In our simulation results, we have demonstrated that our proposed beam schedulin
 
 # File Description
 ## System simulation executable file
-1.main.py: The main program execution file
+1. main.py: The main program execution file
 
-2.NetworkSetting.py: Network architecture configuration
+2. NetworkSetting.py: Network architecture configuration
 
-3.CellUser.py: Generates random user coordinates
+3. CellUser.py: Generates random user coordinates
 
-4.BeamMapping.py: Generates the relationship between base station beams
+4. BeamMapping.py: Generates the relationship between base station beams
 
-5.EventManager.py: Event management program
+5. EventManager.py: Event management program
 
-6.BaseStation.py: Base station behavior
+6. BaseStation.py: Base station behavior
 
-7.UserEquipment.py: User behavior
+7. UserEquipment.py: User behavior
 
-8.TrafficGenerator.py: Generates packets
+8. TrafficGenerator.py: Generates packets
 
-9.BeamTransmit.py: Performs base station beam transmission actions
+9. BeamTransmit.py: Performs base station beam transmission actions
 
-10.RateCalulate.py: Calculates path loss and resource block rates
+10. RateCalulate.py: Calculates path loss and resource block rates
 
-11.ProportionalFair.py: Calculates user resource allocation using the PF fair proportion algorithm
+11. ProportionalFair.py: Calculates user resource allocation using the PF fair proportion algorithm
 
-12.ValueCalculate.py: Calculates beam generation probability and statistical flow generation
+12. ValueCalculate.py: Calculates beam generation probability and statistical flow generation
 
-13.Beamforming.py: Generates base station beams
+13. Beamforming.py: Generates base station beams
 
-14.BeamPredict.py: Calculates and generates results for base station and user beams
+14. BeamPredict.py: Calculates and generates results for base station and user beams
 
-15.BeamExchange.py: Performs base station beam exchange
+15. BeamExchange.py: Performs base station beam exchange
 
-16.Dominate.py: Modifies priority allocation for base stations
+16. Dominate.py: Modifies priority allocation for base stations
 
-17.UeTime.py: Calculates UE activation time
+17. UeTime.py: Calculates UE activation time
 
-18.StatisticWork.py: Performs simulation numerical statistics and output file
+18. StatisticWork.py: Performs simulation numerical statistics and output file
 
-19.DelayCalculate.py: Calculates average delay, packet drop rate, and output flow rate
+19. DelayCalculate.py: Calculates average delay, packet drop rate, and output flow rate
 
 ## System simulation picture generation
-20.BeamNumPicture.py:Generating images with single base station beam counts as the x-axis variable.
+20. BeamNumPicture.py: Generating images with single base station beam counts as the x-axis variable.
 
-21.BsNumPicture.py:Generating images with base station count as the x-axis variable.
+21. BsNumPicture.py: Generating images with base station count as the x-axis variable.
 
-22.CBRDataPicture.py:Generating images with CBR data amount as the x-axis variable.
+22. CBRDataPicture.py: Generating images with CBR data amount as the x-axis variable.
 
-23.DcRatioPicture.py:Generating images with dual connectivity coverage ratio as the x-axis variable.
+23. DcRatioPicture.py: Generating images with dual connectivity coverage ratio as the x-axis variable.
 
-24.UENumPicture.py:Generating images with single base station user count as the x-axis variable.
+24. UENumPicture.py: Generating images with single base station user count as the x-axis variable.
 
-25.UeMovePicture.py:Generating images with user speed as the x-axis variable.
+25. UeMovePicture.py: Generating images with user speed as the x-axis variable.
 
-26.VideoDataPicture.py:Generating images with Video data amount as the x-axis variable.
+26. VideoDataPicture.py: Generating images with Video data amount as the x-axis variable.
 
 # Analog picture with UENumPicture.py
 
