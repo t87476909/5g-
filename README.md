@@ -72,4 +72,8 @@ In our simulation(OUR、OUR_1rx、OUR_2rx) results, we have demonstrated that ou
 
 ![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_3.PNG)
 
+# Notice
+
+If this simulation code is to be used for commercial purposes, please provide notification. Additionally, when referencing it for non-commercial use, please acknowledge the source.
+
 ![image](https://github.com/t87476909/5g-/blob/main/Simulation%20results/Figure_4.PNG)
